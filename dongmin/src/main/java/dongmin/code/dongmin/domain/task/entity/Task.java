@@ -1,10 +1,10 @@
 package dongmin.code.dongmin.domain.task.entity;
 
 import dongmin.code.dongmin.domain.task.dto.TaskDTO;
-import dongmin.code.dongmin.domain.user.dto.UserDTO;
 import dongmin.code.dongmin.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -36,23 +36,33 @@ public class Task {
     @JoinColumn(name = "user_id")
     private User user;
 
-    // DTO -> Entity, Entity 반환
-    public static Task toTask(TaskDTO taskDTO, User user) {
-        Task task = new Task();
-        task.taskName = taskDTO.getTaskName();
-        task.taskLink = taskDTO.getTaskLink();
-        task.submitDate = LocalDate.now();
-        task.userName = user.getUserName();
-        task.user = user;
-        return task;
+    @Builder
+    private Task(Long taskId, String taskName, String taskLink, LocalDate submitDate, String userName, User user) {
+        this.taskId = taskId;
+        this.taskName = taskName;
+        this.taskLink = taskLink;
+        this.submitDate = submitDate;
+        this.userName = userName;
+        this.user = user;
+    }
+
+    public static Task create(TaskDTO taskDTO, User user){
+        return Task.builder()
+                .taskId(taskDTO.getTaskId())
+                .taskName(taskDTO.getTaskName())
+                .taskLink(taskDTO.getTaskLink())
+                .submitDate(LocalDate.now())
+                .userName(user.getName())
+                .user(user)
+                .build();
     }
 
     // DTO에 담긴 정보로 업데이트
-    public void updateTask(TaskDTO taskDTO, User user) {
+    public void update(TaskDTO taskDTO, User user) {
         this.taskName = taskDTO.getTaskName();
         this.taskLink = taskDTO.getTaskLink();
         this.submitDate = LocalDate.now();
-        this.userName = user.getUserName();
+        this.userName = user.getName();
         this.user = user;
     }
 }
