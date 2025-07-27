@@ -23,7 +23,7 @@ public class TaskController {
     }
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<TaskDTO> getUser(@PathVariable Long taskId) {
+    public ResponseEntity<TaskDTO> getTask(@PathVariable Long taskId) {
         return ResponseEntity.status(HttpStatus.OK).body(taskService.findById(taskId));
     }
 
