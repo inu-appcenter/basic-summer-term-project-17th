@@ -1,6 +1,7 @@
 package dongmin.code.dongmin.domain.user.entity;
 
 import dongmin.code.dongmin.domain.task.entity.Task;
+import dongmin.code.dongmin.domain.user.dto.UserCreateRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
@@ -60,27 +61,25 @@ public class User {
         this.joinDate = joinDate;
     }
 
-    public static User create(String name, String email, String encodedPassword,
-                              String part, Double gen, String phoneNumber, LocalDate joinDate) {
+    public static User create(UserCreateRequestDTO userCreateRequestDTO, String encodedPassword) {
         return User.builder()
-                .name(name)
-                .email(email)
+                .name(userCreateRequestDTO.getName())
+                .email(userCreateRequestDTO.getEmail())
                 .password(encodedPassword)
-                .part(part)
-                .gen(gen)
-                .phoneNumber(phoneNumber)
-                .joinDate(joinDate)
+                .part(userCreateRequestDTO.getPart())
+                .gen(userCreateRequestDTO.getGen())
+                .phoneNumber(userCreateRequestDTO.getPhoneNumber())
+                .joinDate(userCreateRequestDTO.getJoinDate())
                 .build();
     }
 
-    public void update(String name, String email, String encodedPassword, String part,
-                       Double gen, String phoneNumber, LocalDate joinDate) {
-        this.name = name;
-        this.email = email;
+    public void update(UserCreateRequestDTO userCreateRequestDTO, String encodedPassword) {
+        this.name = userCreateRequestDTO.getName();
+        this.email = userCreateRequestDTO.getEmail();
         this.password = encodedPassword;
-        this.part = part;
-        this.gen = gen;
-        this.phoneNumber = phoneNumber;
-        this.joinDate = joinDate;
+        this.part = userCreateRequestDTO.getPart();
+        this.gen = userCreateRequestDTO.getGen();
+        this.phoneNumber = userCreateRequestDTO.getPhoneNumber();
+        this.joinDate = userCreateRequestDTO.getJoinDate();
     }
 }

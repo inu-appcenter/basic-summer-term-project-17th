@@ -8,6 +8,10 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum CustomErrorCode implements ErrorCode {
 
+    // 403 Forbidden
+    CHANGE_FORBIDDEN(HttpStatus.FORBIDDEN, 403, "해당 유저의 변경 권한이 없음"),
+    DELETE_FORBIDDEN(HttpStatus.FORBIDDEN, 403, "해당 유저의 삭제 권한이 없음"),
+
     // 404 NOT_FOUND
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, 404,"존재하지 않는 회원"),
     TASK_NOT_FOUND(HttpStatus.NOT_FOUND, 404,"존재하지 않는 과제"),

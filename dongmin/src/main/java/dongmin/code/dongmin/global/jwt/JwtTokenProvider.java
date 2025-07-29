@@ -82,7 +82,7 @@ public class JwtTokenProvider {
         try{
             UserDetailsImpl userDetails = userDetailsService.loadUserByUsername(getEmailFromToken(token));
             return new UsernamePasswordAuthenticationToken(userDetails, "", authorities);
-        }catch(BadCredentialsException | UsernameNotFoundException e) {
+        }catch(BadCredentialsException | UsernameNotFoundException | RestApiException e) {
             throw new RestApiException(CustomErrorCode.USER_NOT_FOUND);
         }
     }

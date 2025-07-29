@@ -26,17 +26,12 @@ public class HomeService {
     @Transactional
     public void signup(UserCreateRequestDTO userCreateRequestDTO) {
         userRepository.save(User.create(
-                userCreateRequestDTO.getName(),
-                userCreateRequestDTO.getEmail(),
-                bCryptPasswordEncoder.encode(userCreateRequestDTO.getPassword()),
-                userCreateRequestDTO.getPart(),
-                userCreateRequestDTO.getGen(),
-                userCreateRequestDTO.getPhoneNumber(),
-                userCreateRequestDTO.getJoinDate()
+                userCreateRequestDTO,
+                bCryptPasswordEncoder.encode(userCreateRequestDTO.getPassword())
         ));
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public JwtToken login(LoginRequestDTO loginRequestDTO) {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginRequestDTO.getEmail(), loginRequestDTO.getPassword());
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);

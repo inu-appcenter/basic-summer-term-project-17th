@@ -1,6 +1,6 @@
 package dongmin.code.dongmin.domain.task.entity;
 
-import dongmin.code.dongmin.domain.task.dto.TaskDTO;
+import dongmin.code.dongmin.domain.task.dto.TaskCreateRequestDTO;
 import dongmin.code.dongmin.domain.user.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -46,23 +46,19 @@ public class Task {
         this.user = user;
     }
 
-    public static Task create(TaskDTO taskDTO, User user){
+    public static Task create(TaskCreateRequestDTO taskCreateRequestDTO, User user){
         return Task.builder()
-                .taskId(taskDTO.getTaskId())
-                .taskName(taskDTO.getTaskName())
-                .taskLink(taskDTO.getTaskLink())
+                .taskName(taskCreateRequestDTO.getTaskName())
+                .taskLink(taskCreateRequestDTO.getTaskLink())
                 .submitDate(LocalDate.now())
                 .userName(user.getName())
                 .user(user)
                 .build();
     }
 
-    // DTO에 담긴 정보로 업데이트
-    public void update(TaskDTO taskDTO, User user) {
-        this.taskName = taskDTO.getTaskName();
-        this.taskLink = taskDTO.getTaskLink();
+    public void update(TaskCreateRequestDTO taskCreateRequestDTO) {
+        this.taskName = taskCreateRequestDTO.getTaskName();
+        this.taskLink = taskCreateRequestDTO.getTaskLink();
         this.submitDate = LocalDate.now();
-        this.userName = user.getName();
-        this.user = user;
     }
 }
