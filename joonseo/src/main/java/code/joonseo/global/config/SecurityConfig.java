@@ -1,23 +1,26 @@
-package code.joonseo.config;
+package code.joonseo.global.config;
 
 
+import code.joonseo.global.jwt.JwtTokenProvider;
+import code.joonseo.global.jwt.filter.JwtAuthenticcationFilter;
+import code.joonseo.global.jwt.filter.JwtExceptionFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CsrfConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtTokenProvider jwtTokenProvider) throws Exception {
         http
                 .csrf(CsrfConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -50,7 +53,13 @@ public class SecurityConfig {
                         // true: 중복 로그인 시 새 로그인 차단
                         // false: 새 로그인 시 기존 세션 만료 처리
                         .maxSessionsPreventsLogin(true)
-                );
+                )
+
+                // 필터 등록
+                .addFilterBefore(new JwtAuthenticcationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtExceptionFilter(), JwtAuthenticcationFilter.class)
+                .build(); // << 이건머임요?
+
         return http.build();
     }
 

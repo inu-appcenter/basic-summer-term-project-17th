@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class UserInfoService {
+public class UserInfoDto {
 
     private String name;
     private String part;
@@ -18,6 +18,6 @@ public class UserInfoService {
     private String email;
     private String phoneNumber;
 
-    public UserInfoService() {
+    public UserInfoDto() {
     }
 }
