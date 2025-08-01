@@ -1,26 +1,23 @@
 package dongmin.code.dongmin.domain.user.entity;
 
 import dongmin.code.dongmin.domain.task.entity.Task;
+import dongmin.code.dongmin.domain.user.dto.UserCreateRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 @Table(name = "user")
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class User implements UserDetails {
+public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -64,57 +61,25 @@ public class User implements UserDetails {
         this.joinDate = joinDate;
     }
 
-    public static User create(String name, String email, String encodedPassword,
-                              String part, Double gen, String phoneNumber, LocalDate joinDate) {
+    public static User create(UserCreateRequestDTO userCreateRequestDTO, String encodedPassword) {
         return User.builder()
-                .name(name)
-                .email(email)
+                .name(userCreateRequestDTO.getName())
+                .email(userCreateRequestDTO.getEmail())
                 .password(encodedPassword)
-                .part(part)
-                .gen(gen)
-                .phoneNumber(phoneNumber)
-                .joinDate(joinDate)
+                .part(userCreateRequestDTO.getPart())
+                .gen(userCreateRequestDTO.getGen())
+                .phoneNumber(userCreateRequestDTO.getPhoneNumber())
+                .joinDate(userCreateRequestDTO.getJoinDate())
                 .build();
     }
 
-    public void update(String name, String email, String encodedPassword, String part,
-                       Double gen, String phoneNumber, LocalDate joinDate) {
-        this.name = name;
-        this.email = email;
+    public void update(UserCreateRequestDTO userCreateRequestDTO, String encodedPassword) {
+        this.name = userCreateRequestDTO.getName();
+        this.email = userCreateRequestDTO.getEmail();
         this.password = encodedPassword;
-        this.part = part;
-        this.gen = gen;
-        this.phoneNumber = phoneNumber;
-        this.joinDate = joinDate;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority("user"));
-    }
-
-    @Override
-    public String getUsername() {
-        return email;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return UserDetails.super.isAccountNonExpired();
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return UserDetails.super.isAccountNonLocked();
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return UserDetails.super.isCredentialsNonExpired();
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        this.part = userCreateRequestDTO.getPart();
+        this.gen = userCreateRequestDTO.getGen();
+        this.phoneNumber = userCreateRequestDTO.getPhoneNumber();
+        this.joinDate = userCreateRequestDTO.getJoinDate();
     }
 }

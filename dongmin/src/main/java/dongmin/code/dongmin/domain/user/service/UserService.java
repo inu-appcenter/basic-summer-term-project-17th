@@ -3,7 +3,9 @@ package dongmin.code.dongmin.domain.user.service;
 import dongmin.code.dongmin.domain.user.dto.UserCreateRequestDTO;
 import dongmin.code.dongmin.domain.user.dto.UserResponseDTO;
 import dongmin.code.dongmin.domain.user.entity.User;
+import dongmin.code.dongmin.domain.user.entity.UserDetailsImpl;
 import dongmin.code.dongmin.domain.user.repository.UserRepository;
+import dongmin.code.dongmin.global.exception.error.RestApiException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -11,6 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static dongmin.code.dongmin.global.exception.error.CustomErrorCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -20,9 +24,9 @@ public class UserService {
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional(readOnly = true)
-    public UserResponseDTO findById(Long id) {
+    public UserResponseDTO findById(Long id){
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new RestApiException(USER_NOT_FOUND));
 
         return UserResponseDTO.create(user);
     }
@@ -38,26 +42,27 @@ public class UserService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(Long id, UserDetailsImpl userDetails) {
         User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(() -> new RestApiException(USER_NOT_FOUND));
+
+        if(!id.equals(userDetails.getUser().getId())){
+            throw new RestApiException(DELETE_FORBIDDEN);
+        }
 
         userRepository.deleteById(id);
     }
 
     @Transactional
-    public void update(Long id, UserCreateRequestDTO userCreateRequestDTO) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+    public void update(Long id, UserCreateRequestDTO userCreateRequestDTO, UserDetailsImpl userDetails) {
 
-        user.update(
-                userCreateRequestDTO.getName(),
-                userCreateRequestDTO.getEmail(),
-                bCryptPasswordEncoder.encode(userCreateRequestDTO.getPassword()),
-                userCreateRequestDTO.getPart(),
-                userCreateRequestDTO.getGen(),
-                userCreateRequestDTO.getPhoneNumber(),
-                userCreateRequestDTO.getJoinDate()
-        );
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RestApiException(USER_NOT_FOUND));
+
+        if(!id.equals(userDetails.getUser().getId())){
+            throw new RestApiException(CHANGE_FORBIDDEN);
+        }
+
+        user.update(userCreateRequestDTO, bCryptPasswordEncoder.encode(userCreateRequestDTO.getPassword()));
     }
 }
